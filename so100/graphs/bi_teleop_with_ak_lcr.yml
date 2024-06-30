@@ -1,0 +1,60 @@
+nodes:
+  - id: lcr_left_leader
+    custom:
+      source: python
+      args: ../../node_hub/dynamixel_client/client.py
+      inputs:
+        tick: dora/timer/millis/10
+      outputs:
+        - position
+      envs:
+        PORT: COM9
+        IDS: 1 2 3 4 5 6
+        TORQUE: 0 0 0 0 0 1
+        POSITION: None None None None None -450
+        CURRENT: None None None None None 40
+
+  - id: so100_left_follower
+    custom:
+      source: python
+      args: ../../node_hub/feetech_client/client.py
+      inputs:
+        goal_position: lcr_left_leader/position
+      outputs:
+        - position
+      envs:
+        PORT: COM7
+        IDS: 1 2 3 4 5 6
+        TORQUE: 1 1 1 1 1 1
+        POSITION: None None None None None None
+        CURRENT: None None None None None 500
+
+  - id: lcr_right_leader
+    custom:
+      source: python
+      args: ../../node_hub/dynamixel_client/client.py
+      inputs:
+        tick: dora/timer/millis/10
+      outputs:
+        - position
+      envs:
+        PORT: COM8
+        IDS: 1 2 3 4 5 6
+        TORQUE: 0 0 0 0 0 1
+        POSITION: None None None None None -450
+        CURRENT: None None None None None 40
+
+  - id: so100_right_follower
+    custom:
+      source: python
+      args: ../../node_hub/feetech_client/client.py
+      inputs:
+        goal_position: lcr_right_leader/position
+      outputs:
+        - position
+      envs:
+        PORT: COM10
+        IDS: 1 2 3 4 5 6
+        TORQUE: 1 1 1 1 1 1
+        POSITION: None None None None None None
+        CURRENT: None None None None None 500

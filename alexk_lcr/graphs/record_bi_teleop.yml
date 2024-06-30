@@ -1,0 +1,91 @@
+nodes:
+  - id: lcr_left_leader
+    path: ../../node_hub/dynamixel_client/client.py
+    inputs:
+      pull_present_position: dora/timer/millis/2 # pull the position every 10ms
+    outputs:
+      - present_position
+    env:
+      PORT: COM9
+      IDS: 1 2 3 4 5 6
+
+      TORQUE: False False False False False True
+
+      INITIAL_GOAL_POSITION: None None None None None -450
+      INITIAL_GOAL_CURRENT: None None None None None 40
+
+      HOMING_OFFSET:  -2048 2048 2048 -2048 1024 2048
+      INVERTED:  False True True False True True
+
+  - id: lcr_left_interpolate
+    path: ../nodes/interpolate_lcr_to_lcr.py
+    inputs:
+      leader_position: lcr_left_leader/present_position
+      follower_position: lcr_left_follower/present_position
+    outputs:
+      - goal_position
+
+  - id: lcr_left_follower
+    path: ../../node_hub/dynamixel_client/client.py
+    inputs:
+      pull_present_position: dora/timer/millis/500 # pull the position every 500ms
+      write_goal_position: lcr_left_interpolate/goal_position
+    outputs:
+      - present_position
+    env:
+      PORT: COM7
+      IDS: 1 2 3 4 5 6
+
+      TORQUE: True True True True True True
+
+      INITIAL_GOAL_POSITION: None None None None None -450
+      INITIAL_GOAL_CURRENT: None None None None None 500
+
+      HOMING_OFFSET:  -2048 -2048 -1024 -2048 4096 -2048
+      INVERTED:  False False False False True False
+
+  - id: lcr_right_leader
+    path: ../../node_hub/dynamixel_client/client.py
+    inputs:
+      pull_present_position: dora/timer/millis/2 # pull the position every 10ms
+    outputs:
+      - present_position
+    env:
+      PORT: COM10
+      IDS: 1 2 3 4 5 6
+
+      TORQUE: False False False False False True
+
+      INITIAL_GOAL_POSITION: None None None None None -450
+      INITIAL_GOAL_CURRENT: None None None None None 40
+
+      HOMING_OFFSET:  -2048 2048 2048 -2048 1024 2048
+      INVERTED:  False True True False True True
+
+  - id: lcr_right_interpolate
+    path: python
+    args: ../nodes/interpolate_lcr_to_lcr.py
+    inputs:
+      leader_position: lcr_right_leader/present_position
+      follower_position: lcr_right_follower/present_position
+    outputs:
+      - goal_position
+
+  - id: lcr_right_follower
+    path: ../../node_hub/dynamixel_client/client.py
+    inputs:
+      pull_present_position: dora/timer/millis/500 # pull the position every 500ms
+      write_goal_position: lcr_right_interpolate/goal_position
+    outputs:
+      - present_position
+    env:
+      PORT: COM8
+      IDS: 1 2 3 4 5 6
+
+      TORQUE: True True True True True True
+
+      INITIAL_GOAL_POSITION: None None None None None -450
+      INITIAL_GOAL_CURRENT: None None None None None 500
+
+      HOMING_OFFSET:  -2048 -2048 -1024 -2048 4096 -2048
+      INVERTED:  False False False False True False
